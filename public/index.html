@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Latest News</title>
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+		body {
+			font-family: 'Roboto', sans-serif;
+			max-width: 800px;
+			margin: auto;
+			padding: 30px 20px;
+			background: linear-gradient(to right, #fdfbfb, #ebedee);
+			color: #333;
+		}
+
+		h1 {
+			text-align: center;
+			font-size: 2.5em;
+			color: #2c3e50;
+			margin-bottom: 30px;
+		}
+
+		#searchBox {
+			width: 100%;
+			padding: 12px 16px;
+			margin-bottom: 25px;
+			border-radius: 8px;
+			border: 1px solid #ccc;
+			font-size: 16px;
+			transition: 0.3s;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+		}
+
+		#searchBox:focus {
+			outline: none;
+			border-color: #2980b9;
+			box-shadow: 0 0 8px rgba(41, 128, 185, 0.3);
+		}
+
+		.news-item {
+			margin-bottom: 20px;
+			padding: 15px 20px;
+			background-color: #ffffff;
+			border-radius: 10px;
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+			transition: transform 0.2s ease, box-shadow 0.2s ease;
+		}
+
+		.news-item:hover {
+			transform: translateY(-4px);
+			box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+		}
+
+		a {
+			text-decoration: none;
+			color: #2980b9;
+			font-size: 1.1em;
+			font-weight: bold;
+			display: inline-block;
+			margin-bottom: 6px;
+		}
+
+		a:hover {
+			text-decoration: underline;
+		}
+
+		small {
+			color: #888;
+		}
+
+		.no-results {
+			text-align: center;
+			color: #999;
+			font-style: italic;
+			margin-top: 30px;
+		}
+	</style>
+</head>
+<body>
+	<h1>📰 Latest News</h1>
+
+	<input type="text" id="searchBox" placeholder="🔍 Search by article title...">
+
+	<div id="newsList">Loading news...</div>
+
+	<script>
+		let allArticles = [];
+
+		// Fetch articles from the server
+		fetch("/articles")
+			.then(response => response.json())
+			.then(data => {
+				allArticles = data;
+				renderArticles(data);
+			})
+			.catch(error => {
+				document.getElementById("newsList").innerText = "Error loading news.";
+				console.error("Error:", error);
+			});
+
+		// Render articles on the page
+		function renderArticles(articles) {
+			const list = document.getElementById("newsList");
+			list.innerHTML = ""; // Clear the current list
+
+			if (articles.length === 0) {
+				list.innerHTML = "<p class='no-results'>No matching results found.</p>";
+				return;
+			}
+
+			// Append each article
+			articles.forEach(article => {
+				const item = document.createElement("div");
+				item.className = "news-item";
+				item.innerHTML = `
+					<a href="${article.url}" target="_blank">${article.title}</a><br>
+					<small>Source: ${article.source}</small>
+				`;
+				list.appendChild(item);
+			});
+		}
+
+		// Search functionality
+		document.getElementById("searchBox").addEventListener("input", function () {
+			const keyword = this.value.toLowerCase();
+			const filtered = allArticles.filter(article =>
+				article.title.toLowerCase().includes(keyword)
+			);
+			renderArticles(filtered); // Re-render filtered articles
+		});
+	</script>
+</body>
+</html>
