@@ -17,9 +17,10 @@ import (
 
 // ===== Article Struct =====
 type Article struct {
-	Title  string `json:"title"`
-	URL    string `json:"url"`
-	Source string `json:"source"`
+	Title       string `json:"title"`
+	URL         string `json:"url"`
+	Source      string `json:"source"`
+	PublishedAt string `json:"published_at"`
 }
 
 // ===== Rate Limiter =====
@@ -61,6 +62,38 @@ func (rl *RateLimiter) Limit(next http.Handler) http.Handler {
 }
 
 // ===== Scraper =====
+// func scrapeSource(url string, wg *sync.WaitGroup, ch chan<- Article) {
+// 	defer wg.Done()
+
+// 	res, err := http.Get(url)
+// 	if err != nil {
+// 		log.Println("Lỗi khi truy cập:", url, err)
+// 		return
+// 	}
+// 	defer res.Body.Close()
+
+// 	doc, err := goquery.NewDocumentFromReader(res.Body)
+// 	if err != nil {
+// 		log.Println("Lỗi đọc nội dung:", err)
+// 		return
+// 	}
+
+// 	doc.Find("a").Each(func(i int, s *goquery.Selection) {
+// 		title := strings.TrimSpace(s.Text())
+// 		link, exists := s.Attr("href")
+
+// 		if exists && title != "" {
+// 			if !strings.HasPrefix(link, "/") && strings.Contains(link, "https://vnexpress.net/") {
+// 				ch <- Article{
+// 					Title:  title,
+// 					URL:    link,
+// 					Source: url,
+// 				}
+// 			}
+// 		}
+// 	})
+// }
+
 func scrapeSource(url string, wg *sync.WaitGroup, ch chan<- Article) {
 	defer wg.Done()
 
@@ -83,14 +116,36 @@ func scrapeSource(url string, wg *sync.WaitGroup, ch chan<- Article) {
 
 		if exists && title != "" {
 			if !strings.HasPrefix(link, "/") && strings.Contains(link, "https://vnexpress.net/") {
+				publishedAt := fetchPublishedDate(link)
+
 				ch <- Article{
-					Title:  title,
-					URL:    link,
-					Source: url,
+					Title:       title,
+					URL:         link,
+					Source:      url,
+					PublishedAt: publishedAt,
 				}
 			}
 		}
 	})
+}
+
+func fetchPublishedDate(articleURL string) string {
+	res, err := http.Get(articleURL)
+	if err != nil {
+		log.Println("Lỗi khi truy cập bài viết:", articleURL, err)
+		return ""
+	}
+	defer res.Body.Close()
+
+	doc, err := goquery.NewDocumentFromReader(res.Body)
+	if err != nil {
+		log.Println("Lỗi đọc nội dung bài viết:", err)
+		return ""
+	}
+
+	date := doc.Find("span.date").First().Text()
+	date = strings.TrimSpace(date)
+	return date
 }
 
 func ScrapeNews(sources []string) []Article {
