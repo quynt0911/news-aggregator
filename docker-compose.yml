@@ -38,8 +38,6 @@ services:
       - kafka
     networks:
       - kafka-net
-    environment:
-      - KAFKA_BROKER=host.docker.internal:9092
 
 
 networks:

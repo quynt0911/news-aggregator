@@ -119,7 +119,7 @@ var kafkaWriter *kafka.Writer
 
 func InitProducer() {
 	kafkaWriter = &kafka.Writer{
-		Addr:     kafka.TCP("localhost:9092"),
+		Addr:     kafka.TCP("kafka:9092"),
 		Topic:    "news_topic",
 		Balancer: &kafka.LeastBytes{},
 	}
@@ -133,7 +133,7 @@ func SendNewsToKafka(newsJson string) error {
 
 func publishNewsToKafka(article Article) error {
 	writer := kafka.NewWriter(kafka.WriterConfig{
-		Brokers: []string{"localhost:9093"},
+		Brokers: []string{"kafka:9093"},
 		Topic:   "news_topic",
 	})
 	defer writer.Close()
@@ -153,7 +153,7 @@ func publishNewsToKafka(article Article) error {
 // ===== Kafka Consumer =====
 func StartConsumer(newsChan chan string) {
 	r := kafka.NewReader(kafka.ReaderConfig{
-		Brokers: []string{"localhost:9092"},
+		Brokers: []string{"kafka:9092"},
 		Topic:   "news_topic",
 		GroupID: "news-consumer-group",
 	})
@@ -173,7 +173,7 @@ func StartConsumer(newsChan chan string) {
 
 func ConsumeNews() {
 	reader := kafka.NewReader(kafka.ReaderConfig{
-		Brokers: []string{"localhost:9093"},
+		Brokers: []string{"kafka:9093"},
 		Topic:   "news-updates",
 		GroupID: "news-group",
 	})
@@ -189,7 +189,7 @@ func ConsumeNews() {
 
 func ProduceArticle(article string) {
 	writer := kafka.NewWriter(kafka.WriterConfig{
-		Brokers: []string{"localhost:9093"},
+		Brokers: []string{"kafka:9093"},
 		Topic:   "news-updates",
 	})
 
