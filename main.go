@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 	"sync"
 	"time"
@@ -117,9 +118,17 @@ func ScrapeNews(sources []string) []Article {
 // ===== Kafka Producer =====
 var kafkaWriter *kafka.Writer
 
+func getKafkaBrokers() []string {
+	brokers := os.Getenv("KAFKA_BROKER")
+	if brokers == "" {
+		brokers = "localhost:9092" // fallback (local dev)
+	}
+	return strings.Split(brokers, ",")
+}
+
 func InitProducer() {
 	kafkaWriter = &kafka.Writer{
-		Addr:     kafka.TCP("kafka:9092"),
+		Addr:     kafka.TCP(getKafkaBrokers()...),
 		Topic:    "news_topic",
 		Balancer: &kafka.LeastBytes{},
 	}
@@ -133,7 +142,7 @@ func SendNewsToKafka(newsJson string) error {
 
 func publishNewsToKafka(article Article) error {
 	writer := kafka.NewWriter(kafka.WriterConfig{
-		Brokers: []string{"kafka:9093"},
+		Brokers: getKafkaBrokers(),
 		Topic:   "news_topic",
 	})
 	defer writer.Close()
@@ -153,7 +162,7 @@ func publishNewsToKafka(article Article) error {
 // ===== Kafka Consumer =====
 func StartConsumer(newsChan chan string) {
 	r := kafka.NewReader(kafka.ReaderConfig{
-		Brokers: []string{"kafka:9092"},
+		Brokers: getKafkaBrokers(),
 		Topic:   "news_topic",
 		GroupID: "news-consumer-group",
 	})
@@ -173,7 +182,7 @@ func StartConsumer(newsChan chan string) {
 
 func ConsumeNews() {
 	reader := kafka.NewReader(kafka.ReaderConfig{
-		Brokers: []string{"kafka:9093"},
+		Brokers: getKafkaBrokers(),
 		Topic:   "news-updates",
 		GroupID: "news-group",
 	})
@@ -189,7 +198,7 @@ func ConsumeNews() {
 
 func ProduceArticle(article string) {
 	writer := kafka.NewWriter(kafka.WriterConfig{
-		Brokers: []string{"kafka:9093"},
+		Brokers: getKafkaBrokers(),
 		Topic:   "news-updates",
 	})
 
@@ -253,5 +262,4 @@ func main() {
 
 	log.Println("Server running on http://localhost:8081")
 	log.Fatal(http.ListenAndServe(":8081", nil))
-
 }

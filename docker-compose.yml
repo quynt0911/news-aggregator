@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   zookeeper:
@@ -36,6 +36,8 @@ services:
       - "8081:8081"
     depends_on:
       - kafka
+    environment:
+      - KAFKA_BROKER=kafka:9093
     networks:
       - kafka-net
 
