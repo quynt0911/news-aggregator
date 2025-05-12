@@ -1,4 +1,4 @@
-
+<!-- 
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -173,4 +173,495 @@
 </body>
 </html>
 
+ -->
 
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>TechNews Portal</title>
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Poppins:wght@400;500;600;700&display=swap');
+
+		:root {
+			--primary: #2563eb;
+			--primary-dark: #1d4ed8;
+			--secondary: #10b981;
+			--dark: #0f172a;
+			--light: #f8fafc;
+			--accent: #6366f1;
+			--danger: #ef4444;
+			--card-bg: rgba(255, 255, 255, 0.9);
+			--glass-bg: rgba(255, 255, 255, 0.15);
+		}
+
+		* {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+		}
+
+		body {
+			font-family: 'Poppins', sans-serif;
+			background: #0f172a;
+			background-image: 
+				radial-gradient(circle at 25% 10%, rgba(37, 99, 235, 0.15) 0%, transparent 50%),
+				radial-gradient(circle at 75% 90%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+				radial-gradient(circle at 90% 25%, rgba(99, 102, 241, 0.05) 0%, transparent 50%);
+			color: var(--light);
+			margin: 0;
+			padding: 20px;
+			min-height: 100vh;
+		}
+
+		.container {
+			max-width: 1000px;
+			margin: 20px auto;
+			padding: 0 20px;
+		}
+
+		header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 40px;
+			padding: 20px 0;
+			border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+		}
+
+		.logo {
+			display: flex;
+			align-items: center;
+			gap: 15px;
+			color: var(--light);
+		}
+
+		.logo-icon {
+			font-size: 32px;
+			color: var(--primary);
+			text-shadow: 0 0 15px rgba(37, 99, 235, 0.5);
+		}
+
+		.logo-text {
+			font-size: 28px;
+			font-weight: 700;
+			background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+			-webkit-background-clip: text;
+			background-clip: text;
+			-webkit-text-fill-color: transparent;
+			letter-spacing: -0.5px;
+		}
+
+		.subtitle {
+			display: block;
+			font-size: 12px;
+			font-weight: 400;
+			color: rgba(255, 255, 255, 0.6);
+			letter-spacing: 2px;
+			text-transform: uppercase;
+			margin-top: -5px;
+			-webkit-text-fill-color: rgba(255, 255, 255, 0.6);
+		}
+
+		.search-wrapper {
+			position: relative;
+			width: 100%;
+			margin: 0 auto 30px;
+		}
+
+		#searchBox {
+			width: 100%;
+			padding: 16px 50px 16px 22px;
+			border-radius: 12px;
+			border: 1px solid rgba(255, 255, 255, 0.1);
+			background: rgba(255, 255, 255, 0.05);
+			backdrop-filter: blur(10px);
+			font-family: 'JetBrains Mono', monospace;
+			font-size: 16px;
+			color: var(--light);
+			box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+			transition: all 0.3s ease;
+		}
+
+		#searchBox::placeholder {
+			color: rgba(255, 255, 255, 0.5);
+		}
+
+		#searchBox:focus {
+			outline: none;
+			border-color: var(--primary);
+			box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+		}
+
+		.clear-btn {
+			position: absolute;
+			right: 16px;
+			top: 50%;
+			transform: translateY(-50%);
+			background: none;
+			border: none;
+			font-size: 20px;
+			color: rgba(255, 255, 255, 0.6);
+			cursor: pointer;
+			transition: all 0.2s;
+			width: 30px;
+			height: 30px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border-radius: 50%;
+		}
+
+		.clear-btn:hover {
+			color: var(--light);
+			background: rgba(255, 255, 255, 0.1);
+		}
+
+		.news-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+			gap: 25px;
+		}
+
+		.news-item {
+			position: relative;
+			background: var(--glass-bg);
+			backdrop-filter: blur(12px);
+			border-radius: 16px;
+			overflow: hidden;
+			border: 1px solid rgba(255, 255, 255, 0.1);
+			transition: all 0.3s ease;
+		}
+
+		.news-item::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			height: 4px;
+			background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+			opacity: 0;
+			transition: opacity 0.3s ease;
+		}
+
+		.news-item:hover {
+			transform: translateY(-5px);
+			border-color: rgba(255, 255, 255, 0.2);
+			box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+		}
+
+		.news-item:hover::before {
+			opacity: 1;
+		}
+
+		.news-content {
+			padding: 24px;
+		}
+
+		.news-meta {
+			display: flex;
+			align-items: center;
+			margin-bottom: 12px;
+		}
+
+		.news-source {
+			display: inline-flex;
+			align-items: center;
+			font-size: 12px;
+			font-weight: 500;
+			color: var(--light);
+			background: rgba(99, 102, 241, 0.2);
+			padding: 4px 10px;
+			border-radius: 20px;
+		}
+
+		.news-source svg {
+			width: 12px;
+			height: 12px;
+			margin-right: 5px;
+		}
+
+		.news-title {
+			font-size: 18px;
+			font-weight: 600;
+			line-height: 1.4;
+			margin-bottom: 10px;
+			color: var(--light);
+			transition: color 0.2s;
+		}
+
+		.news-link {
+			display: block;
+			text-decoration: none;
+			color: inherit;
+		}
+
+		.news-link:hover .news-title {
+			color: var(--primary);
+		}
+
+		.news-date {
+			display: block;
+			font-size: 13px;
+			color: rgba(255, 255, 255, 0.6);
+			margin-top: 15px;
+			font-family: 'JetBrains Mono', monospace;
+		}
+
+		.read-more {
+			display: inline-flex;
+			align-items: center;
+			margin-top: 15px;
+			color: var(--primary);
+			font-weight: 500;
+			font-size: 14px;
+			transition: all 0.2s;
+		}
+
+		.read-more svg {
+			width: 16px;
+			height: 16px;
+			margin-left: 5px;
+			transition: transform 0.2s;
+		}
+
+		.read-more:hover {
+			color: var(--accent);
+		}
+
+		.read-more:hover svg {
+			transform: translateX(3px);
+		}
+
+		.no-results {
+			text-align: center;
+			padding: 60px 0;
+			color: rgba(255, 255, 255, 0.6);
+			font-size: 18px;
+			grid-column: 1 / -1;
+		}
+
+		.no-results svg {
+			width: 60px;
+			height: 60px;
+			margin-bottom: 20px;
+			color: rgba(255, 255, 255, 0.3);
+		}
+
+		.status-bar {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: 10px 20px;
+			background: rgba(255, 255, 255, 0.05);
+			border-radius: 8px;
+			margin-bottom: 30px;
+			font-family: 'JetBrains Mono', monospace;
+			font-size: 14px;
+			color: rgba(255, 255, 255, 0.7);
+		}
+
+		.status-count {
+			display: flex;
+			align-items: center;
+		}
+
+		.status-count svg {
+			width: 16px;
+			height: 16px;
+			margin-right: 8px;
+			color: var(--secondary);
+		}
+
+		.status-time {
+			display: flex;
+			align-items: center;
+		}
+
+		.status-time svg {
+			width: 16px;
+			height: 16px;
+			margin-right: 8px;
+			color: var(--accent);
+		}
+
+		.loader {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			padding: 50px 0;
+			grid-column: 1 / -1;
+		}
+
+		.loader svg {
+			width: 50px;
+			height: 50px;
+			color: var(--primary);
+			animation: spin 1.5s linear infinite;
+		}
+
+		@keyframes spin {
+			0% { transform: rotate(0deg); }
+			100% { transform: rotate(360deg); }
+		}
+
+		@media (max-width: 768px) {
+			.news-grid {
+				grid-template-columns: 1fr;
+			}
+
+			.logo-text {
+				font-size: 24px;
+			}
+
+			.subtitle {
+				font-size: 10px;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<header>
+			<div class="logo">
+				<div class="logo-icon">⚡</div>
+				<div>
+					<h1 class="logo-text">TechNews<span class="subtitle">Stay Updated</span></h1>
+				</div>
+			</div>
+		</header>
+
+		<div class="search-wrapper">
+			<input type="text" id="searchBox" placeholder="🔍 Search articles by title or keywords...">
+			<button class="clear-btn" onclick="document.getElementById('searchBox').value=''; document.getElementById('searchBox').dispatchEvent(new Event('input'));">×</button>
+		</div>
+
+		<div class="status-bar">
+			<div class="status-count">
+				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+				</svg>
+				<span id="articleCount">0 articles</span>
+			</div>
+			<div class="status-time">
+				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+				</svg>
+				<span id="lastUpdated">Last updated: <span id="updateTime">Just now</span></span>
+			</div>
+		</div>
+
+		<div id="newsList" class="news-grid">
+			<div class="loader">
+				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+				</svg>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		let allArticles = [];
+
+		// Format the current date
+		function formatDate(date) {
+			const options = { year: 'numeric', month: 'short', day: 'numeric' };
+			return date.toLocaleDateString('en-US', options);
+		}
+
+		// Update the time display
+		function updateTimeDisplay() {
+			const now = new Date();
+			document.getElementById('updateTime').textContent = formatDate(now);
+		}
+
+		// Add random dates for demo purposes
+		function addRandomDates(articles) {
+			const now = new Date();
+			return articles.map(article => {
+				const randomDays = Math.floor(Math.random() * 7);
+				const date = new Date(now);
+				date.setDate(date.getDate() - randomDays);
+				return {
+					...article,
+					date: formatDate(date)
+				};
+			});
+		}
+
+		// Call API and render articles
+		fetch("/articles")
+			.then(response => response.json())
+			.then(data => {
+				allArticles = addRandomDates(data);
+				renderArticles(allArticles);
+				document.getElementById('articleCount').textContent = `${allArticles.length} articles`;
+				updateTimeDisplay();
+			})
+			.catch(error => {
+				document.getElementById("newsList").innerHTML = `
+					<div class="no-results">
+						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+						</svg>
+						<p>Error loading news. Please try again later.</p>
+					</div>`;
+				console.error("Error:", error);
+			});
+
+		function renderArticles(articles) {
+			const list = document.getElementById("newsList");
+			list.innerHTML = "";
+
+			if (articles.length === 0) {
+				list.innerHTML = `
+					<div class="no-results">
+						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+						</svg>
+						<p>No matching results found.</p>
+					</div>`;
+				return;
+			}
+
+			articles.forEach(article => {
+				const item = document.createElement("div");
+				item.className = "news-item";
+				item.innerHTML = `
+					<a href="${article.url}" target="_blank" class="news-link">
+						<div class="news-content">
+							<div class="news-meta">
+								<span class="news-source">
+									<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+									</svg>
+									${article.source}
+								</span>
+							</div>
+							<h3 class="news-title">${article.title}</h3>
+							<span class="news-date">${article.date}</span>
+							<div class="read-more">
+								Read more
+								<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+								</svg>
+							</div>
+						</div>
+					</a>
+				`;
+				list.appendChild(item);
+			});
+		}
+
+		document.getElementById("searchBox").addEventListener("input", function () {
+			const keyword = this.value.toLowerCase();
+			const filtered = allArticles.filter(article =>
+				article.title.toLowerCase().includes(keyword)
+			);
+			renderArticles(filtered);
+			document.getElementById('articleCount').textContent = `${filtered.length} articles`;
+		});
+	</script>
+</body>
+</html>
